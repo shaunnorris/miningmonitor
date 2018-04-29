@@ -1,0 +1,2 @@
+# miningmonitor
+mining monitor scripts
