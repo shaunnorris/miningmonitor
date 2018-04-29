@@ -29,6 +29,7 @@ content = page.read()
 data = simplejson.loads(content)
 averageHashrate = data["hashrate"]
 btcPerDay = float(data["value_last_day"])
+activeWorkers = data["worker_length"] 
 
 pricesite = "https://api.coindesk.com/v1/bpi/currentprice.json"
 req2 = urllib2.Request(pricesite, headers=hdr)
@@ -40,11 +41,18 @@ except urllib2.HTTPError, e:
     e.fp.read()
 
 
+
+elecperDay = 1.3 * 0.12 * 24 * activeWorkers / 1.26
+# rought approximation of 1.3kw per miner at 15cents CDN with 1.26 hard coded exchange rate
+
 USDBTC = pricedata["bpi"]["USD"]["rate"]
 USDBTC = float(USDBTC.replace(',', ''))
 print USDBTC
 
 usdPerDay = USDBTC * btcPerDay
+profitperDay = usdPerDay - elecperDay
+
+
 print usdPerDay
 
 print averageHashrate 
@@ -55,3 +63,5 @@ print g.send('averageHashrate', averageHashrate)
 print g.send('btcPerDay', btcPerDay)
 print g.send('usdPerDay', usdPerDay)
 print g.send('USDBTC', USDBTC)
+print g.send('elecperDay', elecperDay)
+print g.send('profitperDay', profitperDay)
