@@ -29,10 +29,18 @@ data = simplejson.loads(content)
 
 averageHashrate = data["data"]["averageHashrate"]
 usdPerDay = data["data"]["usdPerMin"]*60*24
+activeWorkers = data["data"]["activeWorkers"] 
+elecperDay = 0.6 * 0.21 * 24 * activeWorkers / 1.32
+profitperDay = usdPerDay - elecperDay
+ 
+# 600 W = 0.6kW * 21 cents / kwH * 24 h * 1.32 SGD / USD (rough approximation)
 
 print averageHashrate 
 print usdPerDay
+print elecperDay
 
 g = graphitesend.init(graphite_server='localhost',system_name='ethermine',group='mining')
 print g.send('averageHashrate', averageHashrate)
 print g.send('usdPerDay', usdPerDay)
+print g.send('elecperDay', elecperDay)
+print g.send('profitperDay', profitperDay)
